@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Linkboard Extension",
+  "version": "0.0.0",
+  "permissions": ["activeTab", "storage", "tabs", "contextMenus", "notifications"],
+  "host_permissions": ["http://localhost:3000/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
