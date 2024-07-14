@@ -1,7 +1,7 @@
 // Constants
 const API_BASE_URL = "https://linkboard.dev";
 const BOOKMARK_API_ENDPOINT = `${API_BASE_URL}/api/bookmarks`;
-const LOGIN_PAGE_URL = `${API_BASE_URL}/login`;
+const LOGIN_PAGE_URL = `${API_BASE_URL}`;
 
 // Create context menu on install
 chrome.runtime.onInstalled.addListener(() => {
