@@ -34,18 +34,17 @@ async function addBookmark(tab) {
       credentials: "include",
     });
 
-    if (response.status === 401) {
-      const data = await response.json();
-      if (data.error === "LINKBOARD_ERROR_NOT_AUTHENTICATED") {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = `HTTP error! status: ${response.status}`;
+
+      if (response.status === 401 && errorData.error === "LINKBOARD_ERROR_NOT_AUTHENTICATED") {
         await showLoginNotification();
         await chrome.tabs.update(tab.id, { url: LOGIN_PAGE_URL });
         return;
       }
-      throw new Error(data.error || "Unauthorized");
-    }
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -63,7 +62,7 @@ function showNotification(title, message) {
     chrome.notifications.create(
       {
         type: "basic",
-        iconUrl: "icon.png",
+        iconUrl: "assets/icon128.png",
         title,
         message,
       },
@@ -78,7 +77,7 @@ function showLoginNotification() {
     chrome.notifications.create(
       {
         type: "basic",
-        iconUrl: "icon.png",
+        iconUrl: "assets/icon128.png",
         title: "Login Required",
         message: "You need to log in to add bookmarks. Redirecting to login page...",
       },
