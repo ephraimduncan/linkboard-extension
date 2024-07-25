@@ -21,8 +21,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // Function to add bookmark
 async function addBookmark(tab) {
-  console.log("Received request to add bookmark for tab:", tab);
-
   try {
     const pageDetails = await getPageDetails(tab);
 
@@ -49,7 +47,7 @@ async function addBookmark(tab) {
     }
 
     const data = await response.json();
-    console.log("Response from server:", data);
+
     await showNotification("Bookmark Added", "Bookmark added successfully");
   } catch (error) {
     console.error("Error adding bookmark:", error);
