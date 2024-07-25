@@ -1,7 +1,7 @@
 // Constants
 const API_BASE_URL = "https://linkboard.dev";
 const BOOKMARK_API_ENDPOINT = `${API_BASE_URL}/api/bookmarks`;
-const LOGIN_PAGE_URL = `${API_BASE_URL}`;
+const LOGIN_PAGE_URL = `${API_BASE_URL}/?unauthorized=true`;
 
 // Create context menu on install
 chrome.runtime.onInstalled.addListener(() => {
@@ -21,16 +21,17 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // Function to add bookmark
 async function addBookmark(tab) {
-  const bookmark = { url: tab.url, title: tab.title };
-  console.log("Received request to add bookmark:", bookmark);
+  console.log("Received request to add bookmark for tab:", tab);
 
   try {
+    const pageDetails = await getPageDetails(tab);
+
     const response = await fetch(BOOKMARK_API_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(bookmark),
+      body: JSON.stringify(pageDetails),
       credentials: "include",
     });
 
@@ -54,6 +55,36 @@ async function addBookmark(tab) {
     console.error("Error adding bookmark:", error);
     await showNotification("Error", `Error: ${error.message}`);
   }
+}
+
+// Function to get page details including OG image and favicon
+function getPageDetails(tab) {
+  return new Promise((resolve) => {
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: tab.id },
+        function: () => {
+          const ogImage = document.querySelector('meta[property="og:image"]')?.content || "";
+          const favicon = document.querySelector('link[rel*="icon"]')?.href || "";
+          return { ogImage, favicon };
+        },
+      },
+      (results) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error getting page details:", chrome.runtime.lastError);
+          resolve({ url: tab.url, title: tab.title });
+        } else {
+          const { ogImage, favicon } = results[0].result;
+          resolve({
+            url: tab.url,
+            title: tab.title,
+            ogImage,
+            favicon: favicon || tab.favIconUrl,
+          });
+        }
+      }
+    );
+  });
 }
 
 // Function to show notifications

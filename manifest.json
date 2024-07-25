@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Linkboard Extension",
+  "name": "Linkboard Extension (Dev)",
   "version": "0.0.1",
-  "permissions": ["activeTab", "storage", "tabs", "contextMenus", "notifications"],
-  "host_permissions": ["http://localhost:3000/*", "https://linkboard.dev/"],
+  "permissions": ["activeTab", "storage", "tabs", "contextMenus", "notifications", "scripting"],
+  "host_permissions": ["http://localhost:3000/*", "https://linkboard.dev/", "<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
